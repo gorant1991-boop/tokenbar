@@ -6,6 +6,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem!
     private var popover: NSPopover!
     private var vm = StatsViewModel()
+    private var refreshTimer: Timer?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
@@ -23,23 +24,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             rootView: PopoverView(vm: vm)
         )
 
-        // Refresh menu bar label when VM updates
-        NotificationCenter.default.addObserver(
-            forName: NSNotification.Name("TokenBarRefresh"),
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            guard let self, let button = self.statusItem.button else { return }
-            self.updateButton(button)
+        // Poll DB and refresh menu bar label
+        refreshTimer = Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { _ in
+            Task { @MainActor in self.tick() }
         }
+    }
 
-        // Poll to update button label
-        Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { [weak self] _ in
-            Task { @MainActor in
-                guard let self, let button = self.statusItem.button else { return }
-                self.vm.refresh()
-                self.updateButton(button)
-            }
+    private func tick() {
+        vm.refresh()
+        if let button = statusItem.button {
+            updateButton(button)
         }
     }
 
@@ -51,7 +45,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if popover.isShown {
             popover.performClose(nil)
         } else if let button = statusItem.button {
-            vm.refresh()
+            tick()
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
         }
     }
