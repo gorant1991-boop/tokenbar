@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import UserNotifications
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
@@ -18,6 +19,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         Installer.runIfNeeded()
+        AlertManager.requestPermission()
 
         popover = NSPopover()
         popover.contentSize = NSSize(width: 280, height: 440)
