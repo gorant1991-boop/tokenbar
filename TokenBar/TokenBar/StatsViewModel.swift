@@ -10,20 +10,6 @@ final class StatsViewModel: ObservableObject {
     @Published var isLoading = false
 
     private var timer: Timer?
-    private let parserScript: String = {
-        // Resolve parser relative to the .app bundle
-        let bundle = Bundle.main.bundlePath
-        // During dev: script lives at ../../proxy/log_parser.py relative to MacOS/
-        let candidates = [
-            bundle + "/Contents/Resources/log_parser.py",
-            // dev fallback — only present in source tree builds, not in distributed .app
-            (bundle as NSString).deletingLastPathComponent
-                .components(separatedBy: "/build/")[0]
-                + "/proxy/log_parser.py",
-        ]
-        return candidates.first { FileManager.default.fileExists(atPath: $0) }
-            ?? NSHomeDirectory() + "/projects/tools/tokenbar/proxy/log_parser.py"
-    }()
 
     init() {
         syncAndRefresh()
@@ -44,18 +30,9 @@ final class StatsViewModel: ObservableObject {
     }
 
     private func runParser() async {
-        guard FileManager.default.fileExists(atPath: parserScript) else { return }
         await withCheckedContinuation { cont in
             DispatchQueue.global(qos: .utility).async {
-                let proc = Process()
-                proc.executableURL = URL(fileURLWithPath: "/usr/bin/python3")
-                proc.arguments = [self.parserScript]
-                proc.standardOutput = FileHandle.nullDevice
-                let logPath = NSHomeDirectory() + "/Library/Logs/TokenBar.log"
-                FileManager.default.createFile(atPath: logPath, contents: nil)
-                proc.standardError = FileHandle(forWritingAtPath: logPath) ?? FileHandle.nullDevice
-                try? proc.run()
-                proc.waitUntilExit()
+                LogParser.parseAll()
                 cont.resume()
             }
         }
