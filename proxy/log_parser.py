@@ -69,8 +69,8 @@ def parse_all():
     imported = 0
 
     for jsonl_file in CLAUDE_DIR.rglob("*.jsonl"):
-            if jsonl_file.is_symlink():
-                continue
+        if jsonl_file.is_symlink():
+            continue
         try:
             with open(jsonl_file, encoding="utf-8", errors="ignore") as f:
                 for raw in f:
