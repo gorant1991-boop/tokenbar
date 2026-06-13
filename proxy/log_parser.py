@@ -30,8 +30,11 @@ def get_pricing(model: str) -> tuple[float, float]:
 
 
 def init_db():
+    import os
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    old_umask = os.umask(0o077)  # owner-only permissions on DB file
     conn = sqlite3.connect(DB_PATH)
+    os.umask(old_umask)
     conn.execute("""
         CREATE TABLE IF NOT EXISTS usage (
             id          INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -66,6 +69,8 @@ def parse_all():
     imported = 0
 
     for jsonl_file in CLAUDE_DIR.rglob("*.jsonl"):
+            if jsonl_file.is_symlink():
+                continue
         try:
             with open(jsonl_file, encoding="utf-8", errors="ignore") as f:
                 for raw in f:
@@ -98,11 +103,12 @@ def parse_all():
                     # Normalize date-suffixed model names: claude-haiku-4-5-20251001 → claude-haiku-4-5
                     import re as _re
                     model = _re.sub(r"-\d{8}$", "", model)
-                    inp   = usage.get("input_tokens", 0)
-                    out   = usage.get("output_tokens", 0)
-                    cr    = usage.get("cache_read_input_tokens", 0)
-                    cw    = (usage.get("cache_creation_input_tokens", 0) or
-                             usage.get("cache_creation", {}).get("ephemeral_1h_input_tokens", 0))
+                    _cap  = 100_000_000
+                    inp   = max(0, min(usage.get("input_tokens", 0), _cap))
+                    out   = max(0, min(usage.get("output_tokens", 0), _cap))
+                    cr    = max(0, min(usage.get("cache_read_input_tokens", 0), _cap))
+                    cw    = max(0, min(usage.get("cache_creation_input_tokens", 0) or
+                             usage.get("cache_creation", {}).get("ephemeral_1h_input_tokens", 0), _cap))
 
                     in_p, out_p = get_pricing(model)
                     cost = (inp / 1_000_000 * in_p) + (out / 1_000_000 * out_p)
