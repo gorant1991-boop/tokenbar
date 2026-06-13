@@ -8,11 +8,11 @@ TokenBar monitors Claude Code activity from `~/.claude/projects/**/*.jsonl` logs
 
 ## Install
 
-**One-click:** download `TokenBar.zip` from [releases](https://github.com/gorant/tokenbar/releases), unzip, double-click `TokenBar.app`. App installs itself to `~/Applications` and auto-starts on login.
+**One-click:** download `TokenBar.zip` from [releases](https://github.com/gorant1991-boop/tokenbar/releases), unzip, double-click `TokenBar.app`. App installs itself to `~/Applications` and auto-starts on login.
 
 **From source:** 
 ```bash
-git clone https://github.com/gorant/tokenbar
+git clone https://github.com/gorant1991-boop/tokenbar
 cd tokenbar
 ./scripts/build_release.sh
 # Produces: build/TokenBar.zip
