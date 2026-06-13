@@ -1,14 +1,42 @@
 import SwiftUI
 
-// Energy estimates per 1M tokens (Wh), based on ML inference research.
-// Anthropic doesn't publish exact figures — these are approximations.
+// Energy estimates per 1M tokens (Wh).
+// Source: Luccioni et al. 2023 "Power Hungry Processing" + H100 efficiency scaling.
+// Actual Anthropic figures are not public — treat as order-of-magnitude estimates.
 private let MODEL_WH_PER_M: [String: Double] = [
-    "claude-opus":   10.0,
-    "claude-sonnet":  3.5,
-    "claude-haiku":   0.5,
-    "claude-fable":   5.0,
+    "claude-opus":   500.0,   // large model, ~500 Wh/M
+    "claude-sonnet": 150.0,   // mid-size,   ~150 Wh/M
+    "claude-haiku":   15.0,   // small/fast,  ~15 Wh/M
+    "claude-fable":  300.0,
 ]
-private let DEFAULT_WH_PER_M = 3.5
+private let DEFAULT_WH_PER_M = 150.0
+
+private let TAO_QUOTES: [(text: String, source: String)] = [
+    (
+        "Покой побеждает жару.\nСпокойствие создаёт порядок в мире.",
+        "Дао Дэ Цзин, гл. 45"
+    ),
+    (
+        "Необходимо обрести в сердце неподкупную справедливость,\nоставаться невозмутимым — тогда всё начнёт\nменяться само по себе.",
+        "Дао Дэ Цзин (пер. Торчинова)"
+    ),
+    (
+        "Радость и гнев — отступление от дао,\nпечаль и скорбь — утрата блага.",
+        "Чжуан-цзы"
+    ),
+    (
+        "Знающий не говорит.\nГоворящий не знает.",
+        "Дао Дэ Цзин, гл. 56"
+    ),
+    (
+        "Действуй без действия.\nДелай без усилий.\nВкушай без вкуса.",
+        "Дао Дэ Цзин, гл. 63"
+    ),
+    (
+        "Холодный ум создаёт порядок\nв важных делах.",
+        "Дао Дэ Цзин, дух"
+    ),
+]
 
 // CO₂ intensity: global cloud avg with partial renewables ~0.2 kg/kWh
 private let CO2_KG_PER_KWH = 0.2
@@ -39,6 +67,7 @@ struct EcoView: View {
     @Binding var isShowing: Bool
 
     private var stats: EcoStats { computeStats() }
+    @State private var quote = TAO_QUOTES.randomElement()!
 
     var body: some View {
         ZStack {
@@ -189,11 +218,47 @@ struct EcoView: View {
     // MARK: – Disclaimer
 
     private var disclaimer: some View {
-        Text("~ Estimates based on ML inference research.\nAnthropic uses renewable energy — actual\nCO₂ may be significantly lower.")
-            .font(.system(size: 9, design: .monospaced))
-            .foregroundStyle(dim.opacity(0.6))
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.top, 4)
+        VStack(alignment: .leading, spacing: 12) {
+            Text("~ Estimates based on ML inference research.\nAnthropic uses renewable energy — actual\nCO₂ may be significantly lower.")
+                .font(.system(size: 9, design: .monospaced))
+                .foregroundStyle(dim.opacity(0.6))
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            foundingNote
+        }
+    }
+
+    private var foundingNote: some View {
+        let total = TokenDatabase.shared.allTimeTokens()
+        let fmt: String
+        if total >= 1_000_000 { fmt = String(format: "%.1fM", Double(total)/1_000_000) }
+        else if total >= 1_000 { fmt = String(format: "%.0fK", Double(total)/1_000) }
+        else { fmt = "\(total)" }
+
+        return VStack(alignment: .center, spacing: 6) {
+            Rectangle()
+                .fill(Color.white.opacity(0.06))
+                .frame(height: 1)
+
+            Text("На создание этого бара потрачено \(fmt) токенов.")
+                .font(.system(size: 9, design: .monospaced))
+                .foregroundStyle(dim.opacity(0.5))
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+
+            Text("«\(quote.text)»")
+                .font(.system(size: 9, design: .monospaced))
+                .italic()
+                .foregroundStyle(leafCol.opacity(0.5))
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+
+            Text("— \(quote.source)")
+                .font(.system(size: 8, design: .monospaced))
+                .foregroundStyle(dim.opacity(0.35))
+                .frame(maxWidth: .infinity, alignment: .trailing)
+        }
+        .padding(.top, 4)
     }
 
     // MARK: – Compute

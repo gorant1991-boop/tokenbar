@@ -107,6 +107,21 @@ final class TokenDatabase {
         return results
     }
 
+    func allTimeTokens() -> Int {
+        var total = 0
+        withDB { db in
+            var stmt: OpaquePointer?
+            let sql = "SELECT COALESCE(SUM(input_tok + output_tok), 0) FROM usage"
+            if sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK {
+                if sqlite3_step(stmt) == SQLITE_ROW {
+                    total = Int(sqlite3_column_int(stmt, 0))
+                }
+            }
+            sqlite3_finalize(stmt)
+        }
+        return total
+    }
+
     // MARK: - Helpers
 
     private func isoToday() -> String {
