@@ -11,100 +11,119 @@ private let MODEL_WH_PER_M: [String: Double] = [
 ]
 private let DEFAULT_WH_PER_M = 150.0
 
-// 21 цитата — число главы Дао Дэ Цзин о природе самого Дао
-private let TAO_QUOTES: [(text: String, source: String)] = [
-    // Чжуан-цзы и Дао Дэ Цзин
-    (
-        "Жизнь моя имеет предел, а знание — нет.\nГнаться за безграничным\nс помощью ограниченного — опасно.",
-        "Чжуан-цзы, гл. 3"
+// 21 quotes — the number of chapter 21 of the Tao Te Ching, which describes the nature of the Tao itself.
+private struct Quote {
+    let en: String
+    let ru: String
+    let source_en: String
+    let source_ru: String
+}
+
+private let TAO_QUOTES: [Quote] = [
+    Quote(
+        en: "My life has a limit,\nbut my knowledge is without limit.\nTo pursue the limitless with the limited is dangerous.",
+        ru: "Жизнь моя имеет предел, а знание — нет.\nГнаться за безграничным\nс помощью ограниченного — опасно.",
+        source_en: "Zhuangzi, ch. 3", source_ru: "Чжуан-цзы, гл. 3"
     ),
-    (
-        "У кого мало — тот приобретает.\nУ кого много — тот теряется.",
-        "Дао Дэ Цзин, гл. 22"
+    Quote(
+        en: "Less is more.\nMore is confusion.",
+        ru: "У кого мало — тот приобретает.\nУ кого много — тот теряется.",
+        source_en: "Tao Te Ching, ch. 22", source_ru: "Дао Дэ Цзин, гл. 22"
     ),
-    (
-        "Лучше остановиться вовремя,\nчем наполнять до краёв.\nНаточи клинок до предела — и он скоро затупится.",
-        "Дао Дэ Цзин, гл. 9"
+    Quote(
+        en: "Better to stop in time\nthan to fill to the brim.\nSharpen a blade too much and it will soon blunt.",
+        ru: "Лучше остановиться вовремя,\nчем наполнять до краёв.\nНаточи клинок до предела — и он скоро затупится.",
+        source_en: "Tao Te Ching, ch. 9", source_ru: "Дао Дэ Цзин, гл. 9"
     ),
-    (
-        "Слава или жизнь — что дороже?\nЖизнь или накопленное — что нужнее?\nПриобретение или потеря — что больнее?",
-        "Дао Дэ Цзин, гл. 44"
+    Quote(
+        en: "Fame or life — which matters more?\nLife or wealth — which is more precious?\nGain or loss — which is more painful?",
+        ru: "Слава или жизнь — что дороже?\nЖизнь или накопленное — что нужнее?\nПриобретение или потеря — что больнее?",
+        source_en: "Tao Te Ching, ch. 44", source_ru: "Дао Дэ Цзин, гл. 44"
     ),
-    (
-        "Знающий других — мудр.\nЗнающий себя — просветлён.\nПобеждающий других — силён.\nПобеждающий себя — непобедим.",
-        "Дао Дэ Цзин, гл. 33"
+    Quote(
+        en: "Knowing others is wisdom.\nKnowing yourself is enlightenment.\nMastering others is strength.\nMastering yourself is true power.",
+        ru: "Знающий других — мудр.\nЗнающий себя — просветлён.\nПобеждающий других — силён.\nПобеждающий себя — непобедим.",
+        source_en: "Tao Te Ching, ch. 33", source_ru: "Дао Дэ Цзин, гл. 33"
     ),
-    (
-        "Действуй, пока нет беды.\nНаводи порядок, пока нет смуты.",
-        "Дао Дэ Цзин, гл. 64"
+    Quote(
+        en: "Act before trouble arises.\nSet things in order before disorder begins.",
+        ru: "Действуй, пока нет беды.\nНаводи порядок, пока нет смуты.",
+        source_en: "Tao Te Ching, ch. 64", source_ru: "Дао Дэ Цзин, гл. 64"
     ),
-    (
-        "Покой побеждает жару.\nСпокойствие создаёт порядок в мире.",
-        "Дао Дэ Цзин, гл. 45"
+    Quote(
+        en: "Stillness overcomes heat.\nSerenity brings order to the world.",
+        ru: "Покой побеждает жару.\nСпокойствие создаёт порядок в мире.",
+        source_en: "Tao Te Ching, ch. 45", source_ru: "Дао Дэ Цзин, гл. 45"
     ),
-    (
-        "Действуй без действия.\nДелай без усилий.\nВкушай без вкуса.",
-        "Дао Дэ Цзин, гл. 63"
+    Quote(
+        en: "Act without action.\nDo without doing.\nTaste without tasting.",
+        ru: "Действуй без действия.\nДелай без усилий.\nВкушай без вкуса.",
+        source_en: "Tao Te Ching, ch. 63", source_ru: "Дао Дэ Цзин, гл. 63"
     ),
-    (
-        "Радость и гнев — отступление от дао,\nпечаль и скорбь — утрата блага.",
-        "Чжуан-цзы"
+    Quote(
+        en: "Joy and anger are deviations from the Tao.\nSorrow and grief are the loss of virtue.",
+        ru: "Радость и гнев — отступление от дао,\nпечаль и скорбь — утрата блага.",
+        source_en: "Zhuangzi", source_ru: "Чжуан-цзы"
     ),
-    (
-        "Необходимо обрести в сердце неподкупную справедливость,\nоставаться невозмутимым —\nтогда всё начнёт меняться само по себе.",
-        "Дао Дэ Цзин (пер. Торчинова)"
+    Quote(
+        en: "Achieve inner impartiality,\nremain unmoved —\nthen everything will transform of itself.",
+        ru: "Необходимо обрести в сердце неподкупную справедливость,\nоставаться невозмутимым —\nтогда всё начнёт меняться само по себе.",
+        source_en: "Tao Te Ching", source_ru: "Дао Дэ Цзин"
     ),
-    (
-        "Холодный ум создаёт порядок\nв важных делах.",
-        "Дао Дэ Цзин, дух"
+    Quote(
+        en: "A cool mind\ncreates order in important matters.",
+        ru: "Холодный ум создаёт порядок\nв важных делах.",
+        source_en: "Tao Te Ching, spirit", source_ru: "Дао Дэ Цзин, дух"
     ),
-    // Марк Аврелий
-    (
-        "Не трать остаток жизни на мысли о других,\nесли это не связано с общим благом.\nЭто отвлекает тебя от собственного дела.",
-        "Марк Аврелий, Размышления"
+    Quote(
+        en: "Do not waste the rest of your life in thoughts about other people,\nunless it relates to the common good.\nIt distracts you from your own work.",
+        ru: "Не трать остаток жизни на мысли о других,\nесли это не связано с общим благом.\nЭто отвлекает тебя от собственного дела.",
+        source_en: "Marcus Aurelius, Meditations", source_ru: "Марк Аврелий, Размышления"
     ),
-    (
-        "Делай меньше — лучше.\nБольшинство того, что мы говорим и делаем,\nне является необходимым.",
-        "Марк Аврелий, Размышления"
+    Quote(
+        en: "Do less, better.\nMost of what we say and do\nis not essential.",
+        ru: "Делай меньше — лучше.\nБольшинство того, что мы говорим и делаем,\nне является необходимым.",
+        source_en: "Marcus Aurelius, Meditations", source_ru: "Марк Аврелий, Размышления"
     ),
-    // Сенека
-    (
-        "Пока ты откладываешь жизнь — она проходит.\nВсё чужое, Луцилий.\nВремя — только твоё.",
-        "Сенека, Письма к Луцилию"
+    Quote(
+        en: "While you delay, life speeds by.\nEverything belongs to others, Lucilius.\nTime alone is yours.",
+        ru: "Пока ты откладываешь жизнь — она проходит.\nВсё чужое, Луцилий.\nВремя — только твоё.",
+        source_en: "Seneca, Letters to Lucilius", source_ru: "Сенека, Письма к Луцилию"
     ),
-    (
-        "Нас давит обилие вещей.\nКогда хочешь угодить всем —\nне угождаешь никому, в том числе себе.",
-        "Сенека, Письма к Луцилию"
+    Quote(
+        en: "We are oppressed by an abundance of things.\nWhen you try to please everyone\nyou please no one — including yourself.",
+        ru: "Нас давит обилие вещей.\nКогда хочешь угодить всем —\nне угождаешь никому, в том числе себе.",
+        source_en: "Seneca, Letters to Lucilius", source_ru: "Сенека, Письма к Луцилию"
     ),
-    // Паскаль
-    (
-        "Все несчастья человека происходят оттого,\nчто он не умеет спокойно сидеть\nв своей комнате.",
-        "Блез Паскаль"
+    Quote(
+        en: "All of humanity's problems stem from man's inability\nto sit quietly in a room alone.",
+        ru: "Все несчастья человека происходят оттого,\nчто он не умеет спокойно сидеть\nв своей комнате.",
+        source_en: "Blaise Pascal", source_ru: "Блез Паскаль"
     ),
-    // Толстой
-    (
-        "Один из величайших соблазнов —\nоправдывать своё безделье тем,\nчто ты думаешь о великом.",
-        "Лев Толстой"
+    Quote(
+        en: "One of the greatest temptations\nis to justify your idleness by saying\nyou are thinking about great things.",
+        ru: "Один из величайших соблазнов —\nоправдывать своё безделье тем,\nчто ты думаешь о великом.",
+        source_en: "Leo Tolstoy", source_ru: "Лев Толстой"
     ),
-    // Конфуций
-    (
-        "Учиться и не размышлять — напрасно терять время.\nРазмышлять и не учиться — губительно.",
-        "Конфуций, Луньюй"
+    Quote(
+        en: "Learning without thought is labor lost.\nThought without learning is perilous.",
+        ru: "Учиться и не размышлять — напрасно терять время.\nРазмышлять и не учиться — губительно.",
+        source_en: "Confucius, Analects", source_ru: "Конфуций, Луньюй"
     ),
-    // Дхаммапада
-    (
-        "Ум — предшественник всех действий.\nУм — их властелин.\nИз ума они рождены.",
-        "Дхаммапада, гл. 1"
+    Quote(
+        en: "Mind is the forerunner of all actions.\nMind is their master.\nFrom mind they are born.",
+        ru: "Ум — предшественник всех действий.\nУм — их властелин.\nИз ума они рождены.",
+        source_en: "Dhammapada, ch. 1", source_ru: "Дхаммапада, гл. 1"
     ),
-    // Экклезиаст
-    (
-        "Во многой мудрости много печали.\nКто умножает познания —\nумножает скорбь.",
-        "Экклезиаст 1:18"
+    Quote(
+        en: "In much wisdom is much grief.\nHe that increases knowledge\nincreases sorrow.",
+        ru: "Во многой мудрости много печали.\nКто умножает познания —\nумножает скорбь.",
+        source_en: "Ecclesiastes 1:18", source_ru: "Экклезиаст 1:18"
     ),
-    // Борхес
-    (
-        "Время разрушает все вещи.\nКаждый раз, когда я что-то вспоминаю —\nя немного изменяю это.",
-        "Хорхе Луис Борхес"
+    Quote(
+        en: "Time destroys all things.\nEach time I remember something\nI alter it a little.",
+        ru: "Время разрушает все вещи.\nКаждый раз, когда я что-то вспоминаю —\nя немного изменяю это.",
+        source_en: "Jorge Luis Borges", source_ru: "Хорхе Луис Борхес"
     ),
 ]
 
@@ -138,6 +157,7 @@ struct EcoView: View {
 
     private var stats: EcoStats { computeStats() }
     @State private var quote = TAO_QUOTES.randomElement()!
+    @ObservedObject private var settings = SettingsStore.shared
 
     var body: some View {
         ZStack {
@@ -310,20 +330,30 @@ struct EcoView: View {
                 .fill(Color.white.opacity(0.06))
                 .frame(height: 1)
 
-            Text("На создание этого бара потрачено \(fmt) токенов.")
+            let isRu = settings.appLanguage == .ru
+            let noteText = isRu
+                ? "На создание этого бара потрачено \(fmt) токенов."
+                : "This bar was built using \(fmt) tokens."
+            let quoteText = isRu ? quote.ru : quote.en
+            let quoteSource = isRu ? quote.source_ru : quote.source_en
+            let quoteLen = quoteText.count
+            let quoteFontSize: CGFloat = quoteLen > 120 ? 8 : (quoteLen > 80 ? 8.5 : 9)
+
+            Text(noteText)
                 .font(.system(size: 9, design: .monospaced))
                 .foregroundStyle(dim.opacity(0.5))
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity)
 
-            Text("«\(quote.text)»")
-                .font(.system(size: 9, design: .monospaced))
+            Text("«\(quoteText)»")
+                .font(.system(size: quoteFontSize, design: .monospaced))
                 .italic()
                 .foregroundStyle(leafCol.opacity(0.5))
                 .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity)
 
-            Text("— \(quote.source)")
+            Text("— \(quoteSource)")
                 .font(.system(size: 8, design: .monospaced))
                 .foregroundStyle(dim.opacity(0.35))
                 .frame(maxWidth: .infinity, alignment: .trailing)

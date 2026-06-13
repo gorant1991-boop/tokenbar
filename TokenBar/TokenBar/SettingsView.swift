@@ -24,6 +24,7 @@ struct SettingsView: View {
                         planSection
                         limitSection
                         alertSection
+                        languageSection
                     }
                     .padding(18)
                 }
@@ -155,6 +156,29 @@ struct SettingsView: View {
                             .font(.system(size: 11, design: .monospaced))
                             .foregroundStyle(dim)
                     }
+                }
+            }
+        }
+    }
+
+    // MARK: – Language
+
+    private var languageSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            label("LANGUAGE")
+            HStack(spacing: 8) {
+                ForEach(AppLanguage.allCases, id: \.rawValue) { lang in
+                    let selected = store.appLanguage == lang
+                    Button(action: { store.appLanguage = lang }) {
+                        Text(lang.label)
+                            .font(.system(size: 11, design: .monospaced))
+                            .foregroundStyle(selected ? .black : dim)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 7)
+                            .background(selected ? accent : card)
+                            .clipShape(RoundedRectangle(cornerRadius: 6))
+                    }
+                    .buttonStyle(.plain)
                 }
             }
         }

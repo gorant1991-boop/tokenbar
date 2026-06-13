@@ -1,6 +1,12 @@
 import Foundation
 import Combine
 
+enum AppLanguage: String, CaseIterable {
+    case en = "en"
+    case ru = "ru"
+    var label: String { self == .en ? "English" : "Русский" }
+}
+
 enum PlanType: String, CaseIterable {
     case pro   = "pro"
     case max5  = "max5"
@@ -37,6 +43,9 @@ final class SettingsStore: ObservableObject {
     @Published var apiDailyBudget: Double {
         didSet { save("apiDailyBudget", apiDailyBudget) }
     }
+    @Published var appLanguage: AppLanguage {
+        didSet { save("appLanguage", appLanguage.rawValue) }
+    }
     // Alert thresholds as fractions, e.g. [0.5, 0.75]
     @Published var alertThresholds: [Double] {
         didSet { save("alertThresholds", alertThresholds) }
@@ -52,6 +61,7 @@ final class SettingsStore: ObservableObject {
 
     private init() {
         let d = UserDefaults.standard
+        appLanguage        = AppLanguage(rawValue: d.string(forKey: "appLanguage") ?? "") ?? .en
         plan               = PlanType(rawValue: d.string(forKey: "plan") ?? "") ?? .pro
         customDailyTokens  = d.integer(forKey: "customDailyTokens")
         apiDailyBudget     = d.object(forKey: "apiDailyBudget") as? Double ?? 10.0
