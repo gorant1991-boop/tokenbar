@@ -12,12 +12,15 @@ struct PopoverView: View {
     @ObservedObject var vm: StatsViewModel
     @ObservedObject private var store = SettingsStore.shared
     @State private var showSettings = false
+    @State private var showEco      = false
 
     var body: some View {
         ZStack {
             bg.ignoresSafeArea()
             if showSettings {
                 SettingsView(isShowing: $showSettings)
+            } else if showEco {
+                EcoView(vm: vm, isShowing: $showEco)
             } else {
                 mainView
             }
@@ -71,13 +74,20 @@ struct PopoverView: View {
                         .foregroundStyle(dim)
                 }
             }
+            Button(action: { showEco = true }) {
+                Image(systemName: "leaf.fill")
+                    .font(.system(size: 12))
+                    .foregroundStyle(Color(red: 0.3, green: 0.85, blue: 0.45).opacity(0.8))
+            }
+            .buttonStyle(.plain)
+            .padding(.leading, 6)
             Button(action: { showSettings = true }) {
                 Image(systemName: "gearshape")
                     .font(.system(size: 12))
                     .foregroundStyle(dim)
             }
             .buttonStyle(.plain)
-            .padding(.leading, 8)
+            .padding(.leading, 6)
         }
         .padding(.horizontal, 18)
         .padding(.top, 18)
