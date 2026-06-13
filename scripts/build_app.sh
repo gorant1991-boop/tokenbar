@@ -31,8 +31,9 @@ lipo -create -output "$APP/Contents/MacOS/TokenBar" \
   "$APP/Contents/MacOS/TokenBar_arm64"
 rm "$APP/Contents/MacOS/TokenBar_x86_64" "$APP/Contents/MacOS/TokenBar_arm64"
 
-echo "[3/4] Writing Info.plist..."
+echo "[3/4] Writing Info.plist and resources..."
 cp "$SRC/Info.plist" "$APP/Contents/Info.plist"
+[ -f "$SRC/AppIcon.icns" ] && cp "$SRC/AppIcon.icns" "$APP/Contents/Resources/AppIcon.icns"
 
 # PkgInfo
 echo -n "APPL????" > "$APP/Contents/PkgInfo"
