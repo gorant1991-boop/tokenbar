@@ -17,6 +17,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             button.target = self
         }
 
+        Installer.runIfNeeded()
+
         popover = NSPopover()
         popover.contentSize = NSSize(width: 280, height: 440)
         popover.behavior = .transient

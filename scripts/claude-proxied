@@ -1,0 +1,4 @@
+#!/bin/bash
+# Wrapper: launches claude CLI with TokenBar proxy enabled.
+# Symlink or add to PATH: ln -s ~/projects/tools/tokenbar/scripts/claude-proxied /usr/local/bin/ccp
+HTTPS_PROXY=http://127.0.0.1:8080 claude "$@"

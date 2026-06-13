@@ -38,7 +38,7 @@ final class TokenDatabase {
             var stmt: OpaquePointer?
             let sql = "SELECT COALESCE(SUM(cost_usd),0), COALESCE(SUM(input_tok),0), COALESCE(SUM(output_tok),0) FROM usage WHERE day=?"
             if sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK {
-                sqlite3_bind_text(stmt, 1, today, -1, nil)
+                bind(stmt, 1, today)
                 if sqlite3_step(stmt) == SQLITE_ROW {
                     cost   = sqlite3_column_double(stmt, 0)
                     input  = Int(sqlite3_column_int(stmt, 1))
@@ -65,7 +65,7 @@ final class TokenDatabase {
                 GROUP BY model ORDER BY SUM(cost_usd) DESC
             """
             if sqlite3_prepare_v2(db, sql, -1, &stmt, nil) == SQLITE_OK {
-                sqlite3_bind_text(stmt, 1, filter, -1, nil)
+                bind(stmt, 1, filter)
                 while sqlite3_step(stmt) == SQLITE_ROW {
                     let model  = String(cString: sqlite3_column_text(stmt, 0))
                     let cost   = sqlite3_column_double(stmt, 1)
@@ -113,6 +113,13 @@ final class TokenDatabase {
         let fmt = DateFormatter()
         fmt.dateFormat = "yyyy-MM-dd"
         return fmt.string(from: Date())
+    }
+
+    // SQLITE_TRANSIENT — SQLite copies the string before the call returns
+    private let TRANSIENT = unsafeBitCast(-1, to: sqlite3_destructor_type.self)
+
+    private func bind(_ stmt: OpaquePointer?, _ idx: Int32, _ s: String) {
+        sqlite3_bind_text(stmt, idx, s, -1, TRANSIENT)
     }
 
     private func withDB(_ block: (OpaquePointer) -> Void) {

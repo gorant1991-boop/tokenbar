@@ -1,45 +1,55 @@
 import SwiftUI
 
+private let accent = Color(red: 0.2, green: 0.7, blue: 1.0)
+
 struct BarChartView: View {
     let days: [DayStats]
 
     private var maxCost: Double {
-        days.map(\.totalCost).max() ?? 1
+        max(days.map(\.totalCost).max() ?? 0, 0.001)
     }
 
     var body: some View {
-        HStack(alignment: .bottom, spacing: 4) {
+        HStack(alignment: .bottom, spacing: 3) {
             ForEach(days, id: \.day) { stat in
-                VStack(spacing: 2) {
+                let isToday = stat.day == isoToday()
+                let ratio   = CGFloat(stat.totalCost / maxCost)
+                let barH    = max(2, ratio * 56)
+
+                VStack(spacing: 3) {
                     if stat.totalCost > 0 {
                         Text("$\(String(format: "%.2f", stat.totalCost))")
-                            .font(.system(size: 8))
-                            .foregroundStyle(.secondary)
+                            .font(.system(size: 7, design: .monospaced))
+                            .foregroundStyle(isToday ? accent : Color.white.opacity(0.3))
+                    } else {
+                        Text(" ")
+                            .font(.system(size: 7))
                     }
-                    RoundedRectangle(cornerRadius: 3)
-                        .fill(stat.day == isoToday() ? Color.accentColor : Color.secondary.opacity(0.5))
-                        .frame(
-                            width: 26,
-                            height: max(4, CGFloat(stat.totalCost / max(maxCost, 0.001)) * 60)
-                        )
+
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(isToday
+                            ? accent
+                            : Color.white.opacity(0.18))
+                        .frame(width: 24, height: barH)
+
                     Text(shortDay(stat.day))
-                        .font(.system(size: 8))
-                        .foregroundStyle(.secondary)
+                        .font(.system(size: 7, design: .monospaced))
+                        .foregroundStyle(isToday ? accent.opacity(0.8) : Color.white.opacity(0.25))
                 }
+                .frame(maxWidth: .infinity)
             }
         }
-        .frame(height: 90)
+        .frame(height: 86)
     }
 
     private func isoToday() -> String {
-        let fmt = DateFormatter()
-        fmt.dateFormat = "yyyy-MM-dd"
+        let fmt = DateFormatter(); fmt.dateFormat = "yyyy-MM-dd"
         return fmt.string(from: Date())
     }
 
     private func shortDay(_ iso: String) -> String {
-        let parts = iso.split(separator: "-")
-        guard parts.count == 3 else { return iso }
-        return "\(parts[1])/\(parts[2])"
+        let p = iso.split(separator: "-")
+        guard p.count == 3 else { return iso }
+        return "\(p[1])/\(p[2])"
     }
 }
