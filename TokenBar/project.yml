@@ -1,0 +1,33 @@
+name: TokenBar
+options:
+  bundleIdPrefix: com.tokenbar
+  deploymentTarget:
+    macOS: "13.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    CODE_SIGN_STYLE: Automatic
+    ENABLE_HARDENED_RUNTIME: YES
+
+targets:
+  TokenBar:
+    type: application
+    platform: macOS
+    sources:
+      - TokenBar
+    info:
+      path: TokenBar/Info.plist
+      properties:
+        CFBundleName: TokenBar
+        CFBundleDisplayName: TokenBar
+        CFBundleIdentifier: com.tokenbar.app
+        CFBundleVersion: "1"
+        CFBundleShortVersionString: "0.1.0"
+        LSUIElement: true           # Hide from Dock — menu bar only
+        NSPrincipalClass: NSApplication
+        LSMinimumSystemVersion: "13.0"
+    settings:
+      base:
+        PRODUCT_NAME: TokenBar
+        MACOSX_DEPLOYMENT_TARGET: "13.0"
