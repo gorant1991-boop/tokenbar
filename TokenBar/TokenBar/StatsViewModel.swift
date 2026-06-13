@@ -30,6 +30,10 @@ final class StatsViewModel: ObservableObject {
         timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
             Task { @MainActor in self.syncAndRefresh() }
         }
+        // Network refreshes every 5 seconds independently
+        Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
+            Task { @MainActor in self.refreshNetwork() }
+        }
     }
 
     func syncAndRefresh() {
@@ -61,9 +65,13 @@ final class StatsViewModel: ObservableObject {
         models = db.modelBreakdown()
         week   = db.last7Days()
         checkAlerts()
+        refreshNetwork()
+    }
+
+    func refreshNetwork() {
         Task.detached(priority: .utility) {
-            let procs = NetworkMonitor.snapshot()
-            await MainActor.run { self.netProcs = Array(procs.prefix(8)) }
+            let procs = NetworkMonitor.snapshot()   // blocks ~1s in background
+            await MainActor.run { self.netProcs = Array(procs.prefix(6)) }
         }
     }
 

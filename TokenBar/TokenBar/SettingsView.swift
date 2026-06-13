@@ -103,9 +103,10 @@ struct SettingsView: View {
                         .font(.system(size: 10, design: .monospaced))
                         .foregroundStyle(dim)
                 }
-                Text("Leave blank to use plan default")
+                Text("Anthropic doesn't publish token limits.\nSet your own: check today's total when\nClaude starts rate-limiting you.")
                     .font(.system(size: 9, design: .monospaced))
                     .foregroundStyle(dim.opacity(0.7))
+                    .fixedSize(horizontal: false, vertical: true)
             }
         } else {
             VStack(alignment: .leading, spacing: 10) {

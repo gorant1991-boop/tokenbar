@@ -18,15 +18,9 @@ enum PlanType: String, CaseIterable {
 
     var isSubscription: Bool { self != .api }
 
-    // Default daily token budgets (rough estimates — user can override)
-    var defaultDailyTokens: Int {
-        switch self {
-        case .pro:   return 300_000
-        case .max5:  return 1_500_000
-        case .max20: return 6_000_000
-        case .api:   return 0
-        }
-    }
+    // No hardcoded defaults — Anthropic doesn't publish token limits for subscriptions.
+    // User sets their own after observing where they hit rate limits.
+    var defaultDailyTokens: Int { 0 }
 }
 
 final class SettingsStore: ObservableObject {

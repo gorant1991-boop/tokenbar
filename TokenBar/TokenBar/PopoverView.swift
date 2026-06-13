@@ -89,7 +89,8 @@ struct PopoverView: View {
     @ViewBuilder
     private var progressSection: some View {
         let fraction = usageFraction
-        if fraction > 0 || store.plan.isSubscription {
+        let hasLimit = store.plan.isSubscription ? store.dailyTokenLimit > 0 : store.apiDailyBudget > 0
+        if hasLimit && (fraction > 0 || store.plan == .api) {
             VStack(alignment: .leading, spacing: 5) {
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
@@ -171,17 +172,23 @@ struct PopoverView: View {
     }
 
     private func modelRow(_ m: ModelStats) -> some View {
-        HStack(spacing: 6) {
+        let totalTok = vm.today.inputTokens + vm.today.outputTokens
+        let modelTok = m.inputTokens + m.outputTokens
+        let pct = totalTok > 0 ? Int(Double(modelTok) / Double(totalTok) * 100) : 0
+
+        return HStack(spacing: 6) {
             Circle().fill(accent.opacity(0.7)).frame(width: 4, height: 4)
             Text(shortModelName(m.model))
                 .font(.system(size: 11, design: .monospaced))
                 .foregroundStyle(.white.opacity(0.75)).lineLimit(1)
             Spacer()
-            Text(formatTokens(m.inputTokens + m.outputTokens))
+            Text(formatTokens(modelTok))
                 .font(.system(size: 11, design: .monospaced)).foregroundStyle(dim)
             if store.plan.isSubscription {
-                Text(formatTokens(m.inputTokens + m.outputTokens))
-                    .hidden().frame(width: 0)
+                Text("\(pct)%")
+                    .font(.system(size: 11, weight: .medium, design: .monospaced))
+                    .foregroundStyle(accent.opacity(0.7))
+                    .frame(width: 36, alignment: .trailing)
             } else {
                 Text("$\(String(format: "%.4f", m.cost))")
                     .font(.system(size: 11, weight: .medium, design: .monospaced))
@@ -227,9 +234,9 @@ struct PopoverView: View {
                 .font(.system(size: 11, design: .monospaced))
                 .foregroundStyle(.white.opacity(0.75)).lineLimit(1)
             Spacer()
-            Text("↓\(formatBytes(p.rxBytes))")
+            Text("↓\(formatBytes(p.rxBytesPerSec))/s")
                 .font(.system(size: 10, design: .monospaced)).foregroundStyle(dim)
-            Text("↑\(formatBytes(p.txBytes))")
+            Text("↑\(formatBytes(p.txBytesPerSec))/s")
                 .font(.system(size: 10, design: .monospaced)).foregroundStyle(dim)
         }
     }
@@ -324,6 +331,11 @@ struct PopoverView: View {
     }
 
     private func shortModelName(_ model: String) -> String {
-        model.replacingOccurrences(of: "claude-", with: "")
+        var s = model.replacingOccurrences(of: "claude-", with: "")
+        // Strip date suffix: haiku-4-5-20251001 → haiku-4-5
+        if let range = s.range(of: #"-\d{8}$"#, options: .regularExpression) {
+            s.removeSubrange(range)
+        }
+        return s
     }
 }

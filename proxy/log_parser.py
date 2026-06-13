@@ -93,6 +93,11 @@ def parse_all():
                         continue
 
                     model = msg.get("model", "unknown")
+                    if not model or model.startswith("<") or model == "unknown":
+                        continue
+                    # Normalize date-suffixed model names: claude-haiku-4-5-20251001 → claude-haiku-4-5
+                    import re as _re
+                    model = _re.sub(r"-\d{8}$", "", model)
                     inp   = usage.get("input_tokens", 0)
                     out   = usage.get("output_tokens", 0)
                     cr    = usage.get("cache_read_input_tokens", 0)
